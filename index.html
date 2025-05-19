@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>For Someone Special 💌</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to top right, #ffd1dc, #ffe5ec);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 90%;
+      padding: 20px;
+      display: none;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #b2005f;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 18px;
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+
+    button:hover {
+      background-color: #e91e63;
+      transform: scale(1.05);
+    }
+
+    .fade-in {
+      animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(45deg);
+      animation: floatUp 6s linear infinite;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+
+    @keyframes floatUp {
+      0% { bottom: 0; opacity: 1; }
+      100% { bottom: 100%; opacity: 0; }
+    }
+
+    .final-animation {
+      font-size: 2rem;
+      color: #ff0055;
+      animation: pulse 1s ease infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    audio {
+      display: none;
+    }
+
+    #splash {
+      position: absolute;
+      inset: 0;
+      background: #ffcee7;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.8rem;
+      color: #b2005f;
+      z-index: 1000;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    #splash button {
+      margin-top: 25px;
+      font-size: 22px;
+      padding: 15px 40px;
+      border-radius: 40px;
+      background-color: #b2005f;
+      color: white;
+      box-shadow: 0 5px 15px rgba(178,0,95,0.5);
+      transition: background-color 0.3s ease;
+    }
+
+    #splash button:hover {
+      background-color: #e91e63;
+      cursor: pointer;
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="splash">
+    Wait a moment, a song is playing for you... 🎵<br />
+    <button id="startBtn">Start 💖</button>
+  </div>
+
+  <div class="container">
+    <div id="level-content" class="fade-in">
+      <h1>Hey... Can I steal a moment of your time? 😄</h1>
+    </div>
+    <div id="button-area">
+      <button id="nextBtn">Next 💖</button>
+    </div>
+  </div>
+
+  <audio id="bg-music" src="lovesong.mp3" loop></audio>
+
+  <script>
+    const levels = [
+      "Hey... Can I steal a moment of your time? 😄",
+      "I met someone recently... and she might be reading this now. 👀",
+      "Every time you smile, I forget what I was thinking. 🤯",
+      "You must be a magician — because whenever you're around, everything else disappears. ✨",
+      "Are you made of sugar? Because you just made my day 100x sweeter. 🍭",
+      "You’re dangerously cute... I might need a heart seatbelt. 💓",
+      "I’ve been thinking… maybe we could turn ‘Hey’ into ‘Hey, want to grab coffee?’ ☕",
+      "Let’s keep this simple: I like you. Like, a lot. 😳",
+      "So... would you like to go on a date with me? 🥺💖"  // <- Second last
+    ];
+
+    const finalYes = "Awww! You just made me the happiest person today! 💖 Now don’t forget to send me a screenshot… I want to keep this forever. 📸❤️";
+
+const finalNo = "😢 It's okay… maybe in another life where the timing is right. Guess the screenshot won't be needed this time… 💔";
+
+
+    let currentLevel = 0;
+    const content = document.getElementById("level-content");
+    const buttonArea = document.getElementById("button-area");
+    const nextBtn = document.getElementById("nextBtn");
+    const splash = document.getElementById("splash");
+    const startBtn = document.getElementById("startBtn");
+    const music = document.getElementById("bg-music");
+
+    startBtn.addEventListener("click", () => {
+      splash.style.display = "none";
+      music.play().catch(() => {});
+      document.querySelector(".container").style.display = "block";
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentLevel++;
+      if (currentLevel < levels.length - 1) {
+        content.innerHTML = `<h1>${levels[currentLevel]}</h1>`;
+        refreshAnimation();
+        if (currentLevel === levels.length - 2) {
+          nextBtn.innerText = "Almost 💌";
+        }
+      } else {
+        // Show YES/NO options
+        content.innerHTML = `<h1>${levels[currentLevel]}</h1>`;
+        buttonArea.innerHTML = `
+          <button onclick="handleAnswer(true)">Yes ❤️</button>
+          <button onclick="handleAnswer(false)">No 💔</button>
+        `;
+        refreshAnimation();
+      }
+    });
+
+    function handleAnswer(isYes) {
+      if (isYes) {
+        content.innerHTML = `<h1 class="final-animation">${finalYes}</h1>`;
+      } else {
+        content.innerHTML = `<h1>${finalNo}</h1>`;
+        clearInterval(heartInterval); // stop hearts if No
+      }
+      buttonArea.innerHTML = "";
+    }
+
+    function refreshAnimation() {
+      content.classList.remove("fade-in");
+      void content.offsetWidth;
+      content.classList.add("fade-in");
+    }
+
+    // Floating hearts animation
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = 2 + Math.random() * 3 + "s";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }
+    const heartInterval = setInterval(createHeart, 500);
+  </script>
+
+</body>
+</html>
